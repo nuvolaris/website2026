@@ -1,1 +1,0 @@
-import"./CWj6FrbW.js";import"./BFKbCz-B.js";import{f as r,b as a,c,r as e}from"./DiK5-AMr.js";import{C as n}from"./DvTvOhXR.js";import"./TcLJE_zv.js";var i=r('<section class="contact-section svelte-v9tssu"><!></section>');function C(o){var t=i(),s=c(t);n(s,{}),e(t),a(o,t)}export{C};
