@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Starter account — Trustable AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="font-sans bg-slate-100 text-slate-900 antialiased min-h-screen">
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <div class="bg-white rounded-2xl ring-1 ring-slate-200 shadow-sm p-6 sm:p-8">
+
+      <header class="mb-6">
+        <h1 class="text-2xl sm:text-[26px] font-extrabold tracking-tight text-slate-900">
+          Review your information
+        </h1>
+        <p class="mt-1.5 text-sm text-slate-500">
+          Stored details for your Starter account, read back from the subscribe service.
+        </p>
+      </header>
+
+      <!-- Loading / error / empty state -->
+      <div id="state-box" class="mb-6 rounded-lg bg-brand-50 border-l-4 border-brand-600 px-4 py-3 text-sm text-slate-700 leading-relaxed">
+        Loading your details…
+      </div>
+
+      <!-- Data -->
+      <section id="data-section" class="hidden">
+        <h2 class="text-xs font-semibold tracking-[0.2em] text-slate-400 uppercase mb-4">Account</h2>
+        <dl id="data-grid" class="grid gap-x-8 gap-y-4 sm:grid-cols-2"></dl>
+      </section>
+
+      <!-- Actions -->
+      <div class="pt-8 flex items-center justify-between">
+        <a href="contact-sales.html"
+           class="inline-block px-5 py-2.5 rounded-lg bg-white ring-1 ring-slate-200 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+          Back
+        </a>
+        <a href="trustable.html"
+           class="inline-block px-5 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-sm font-semibold text-white shadow-sm">
+          Done
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const API = 'https://nuvolaris.org/api/v1/web/landing2/form/subscribe';
+
+    // Pretty labels for known fields; anything else falls back to the raw key.
+    const LABELS = {
+      'first-name':        'First name',
+      'last-name':         'Last name',
+      'email':             'Email',
+      'password':          'Password',
+      'confirm-password':  'Confirm password',
+      'company':           'Company',
+      'country':           'Country',
+    };
+    const ORDER = ['first-name', 'last-name', 'email', 'password', 'confirm-password', 'company', 'country'];
+    const MASKED = new Set(['password', 'confirm-password']);
+
+    const stateBox   = document.getElementById('state-box');
+    const dataSec    = document.getElementById('data-section');
+    const dataGrid   = document.getElementById('data-grid');
+
+    function setState(message, tone = 'info') {
+      stateBox.classList.remove('hidden');
+      const base = 'mb-6 rounded-lg border-l-4 px-4 py-3 text-sm leading-relaxed';
+      const variants = {
+        info:    ' bg-brand-50 border-brand-600 text-slate-700',
+        error:   ' bg-red-50 border-red-500 text-red-700',
+        empty:   ' bg-slate-50 border-slate-300 text-slate-600',
+      };
+      stateBox.className = base + (variants[tone] || variants.info);
+      stateBox.textContent = message;
+    }
+
+    function renderFields(data) {
+      dataGrid.replaceChildren();
+      const seen = new Set();
+
+      const push = (key) => {
+        if (seen.has(key)) return;
+        seen.add(key);
+        if (!(key in data)) return;
+        const wrap = document.createElement('div');
+        const dt = document.createElement('dt');
+        dt.className = 'text-xs font-semibold tracking-wide text-slate-400 uppercase';
+        dt.textContent = LABELS[key] || key;
+        const dd = document.createElement('dd');
+        dd.className = 'mt-1 text-sm text-slate-900 break-words';
+        const raw = data[key];
+        dd.textContent = MASKED.has(key)
+          ? (raw ? '•'.repeat(Math.min(String(raw).length, 12)) : '—')
+          : (raw === '' || raw == null ? '—' : String(raw));
+        wrap.append(dt, dd);
+        dataGrid.appendChild(wrap);
+      };
+
+      // Show known fields in a stable order, then any extras.
+      ORDER.forEach(push);
+      Object.keys(data).forEach(push);
+
+      dataSec.classList.remove('hidden');
+    }
+
+    async function load() {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get('email');
+      if (!email) {
+        setState("No email in the URL — we can't look up your details.", 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'read', email }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const body = await res.json();
+        // cache.py returns { output: <dict|null|string> }
+        const payload = body && Object.prototype.hasOwnProperty.call(body, 'output') ? body.output : body;
+
+        if (payload == null) {
+          setState(`No stored details found for ${email}.`, 'empty');
+          return;
+        }
+        if (typeof payload !== 'object') {
+          setState(String(payload), 'error');
+          return;
+        }
+
+        stateBox.classList.add('hidden');
+        renderFields(payload);
+      } catch (err) {
+        setState('Could not load your details: ' + err.message, 'error');
+      }
+    }
+
+    load();
+  </script>
+
+</body>
+</html>
