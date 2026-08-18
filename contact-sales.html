@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create your Starter account — Trustable AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="font-sans bg-slate-100 text-slate-900 antialiased min-h-screen">
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <div class="bg-white rounded-2xl ring-1 ring-slate-200 shadow-sm p-6 sm:p-8">
+
+      <!-- Heading -->
+      <header class="mb-6">
+        <h1 class="text-2xl sm:text-[26px] font-extrabold tracking-tight text-slate-900">
+          Create your Starter account
+        </h1>
+        <p class="mt-1.5 text-sm text-slate-500">
+          We need a few details to activate your account.
+        </p>
+      </header>
+
+      <!-- Info banner -->
+      <div class="mb-6 rounded-lg bg-brand-50 border-l-4 border-brand-600 px-4 py-3 text-sm text-slate-700 leading-relaxed">
+        Starter is free for 30 days.
+        <span class="font-semibold text-slate-900">Nothing will be charged today — we will warn you by email before charging.</span>
+        Cancel any time.
+      </div>
+
+      <!-- Account form -->
+      <form id="account-form" class="space-y-5"
+            action="https://nuvolaris.org/api/v1/web/landing2/form/subscribe"
+            method="POST">
+        <h2 class="text-xs font-semibold tracking-[0.2em] text-slate-400 uppercase">Account</h2>
+
+        <!-- First / Last name -->
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label for="first-name" class="block text-sm font-semibold text-slate-800 mb-1.5">First name</label>
+            <input id="first-name" name="first-name" type="text" autocomplete="given-name"
+                   class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+          </div>
+          <div>
+            <label for="last-name" class="block text-sm font-semibold text-slate-800 mb-1.5">Last name</label>
+            <input id="last-name" name="last-name" type="text" autocomplete="family-name"
+                   class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+          </div>
+        </div>
+
+        <!-- Email (full width) -->
+        <div>
+          <label for="email" class="block text-sm font-semibold text-slate-800 mb-1.5">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email"
+                 class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+        </div>
+
+        <!-- Password / Confirm -->
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label for="password" class="block text-sm font-semibold text-slate-800 mb-1.5">Password</label>
+            <input id="password" name="password" type="password" autocomplete="new-password"
+                   class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+          </div>
+          <div>
+            <label for="confirm-password" class="block text-sm font-semibold text-slate-800 mb-1.5">Confirm password</label>
+            <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password"
+                   class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+          </div>
+        </div>
+
+        <!-- Company / Country -->
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label for="company" class="block text-sm font-semibold text-slate-800 mb-1.5">Company <span class="font-normal text-slate-400">(optional)</span></label>
+            <input id="company" name="company" type="text" autocomplete="organization"
+                   class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+          </div>
+          <div>
+            <label for="country" class="block text-sm font-semibold text-slate-800 mb-1.5">Country</label>
+            <input id="country" name="country" type="text" autocomplete="country-name"
+                   class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-4 flex items-center justify-between">
+          <a href="plans.html"
+             class="inline-block px-5 py-2.5 rounded-lg bg-white ring-1 ring-slate-200 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+            Back
+          </a>
+          <button id="submit-btn" type="submit"
+                  class="px-5 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold text-white shadow-sm">
+            Continue to payment
+          </button>
+        </div>
+
+        <p id="form-status" class="hidden mt-3 text-sm"></p>
+      </form>
+
+    </div>
+
+  </main>
+
+  <script>
+    const form   = document.getElementById('account-form');
+    const btn    = document.getElementById('submit-btn');
+    const status = document.getElementById('form-status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = Object.fromEntries(new FormData(form).entries());
+      payload.mode = 'write';
+
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      status.className = 'mt-3 text-sm text-slate-500';
+      status.textContent = '';
+
+      try {
+        await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) {
+        // Network-level failure — log, but still route to local.html as requested.
+        console.error('subscribe request failed:', err);
+      }
+
+      window.location.href = 'local.html?email=' + encodeURIComponent(payload.email || '');
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Trustable — Plans</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f7f9fc;
+    --surface: #ffffff;
+    --surface-2: #f1f4f9;
+    --border: #e3e8ef;
+    --border-strong: #cdd5df;
+    --text: #0f172a;
+    --muted: #64748b;
+    --primary: #2563eb;
+    --primary-2: #1d4ed8;
+    --accent: #7c3aed;
+    --gold: #f59e0b;
+    --good: #16a34a;
+    --danger: #dc2626;
+    --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+    --shadow-soft: 0 4px 14px rgba(15, 23, 42, .06);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background:
+      radial-gradient(900px 500px at 50% -200px, #eaf0ff 0%, rgba(255,255,255,0) 60%) no-repeat,
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+  }
+  a { color: var(--primary); }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  header.brand {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; margin-bottom: 24px;
+  }
+  header.brand img.logo {
+    max-width: 220px; height: auto;
+    filter: drop-shadow(0 4px 18px rgba(37, 99, 235, .15));
+  }
+  header.brand h1 {
+    font-size: 28px; margin: 8px 0 0; font-weight: 700; letter-spacing: .2px; color: var(--text);
+  }
+  header.brand p.tagline {
+    margin: 0; color: var(--muted); font-size: 15px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex; justify-content: center; gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px;
+    margin: 24px auto 18px;
+    max-width: 640px;
+    box-shadow: var(--shadow-soft);
+  }
+  .tab {
+    flex: 1; text-align: center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 600; font-size: 14px;
+    transition: background .2s, color .2s;
+    user-select: none;
+    border: none; background: transparent;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, .28);
+  }
+
+  /* Billing toggle */
+  .billing-toggle {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px;
+    margin: 0 auto 26px;
+  }
+  .billing-toggle .billing-label {
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    transition: color .15s;
+  }
+  .billing-toggle .billing-label.active { color: var(--text); }
+  .switch {
+    position: relative;
+    width: 52px; height: 28px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    flex-shrink: 0;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 22px; height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, .2);
+    transition: left .2s ease;
+  }
+  .switch.on {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-color: transparent;
+  }
+  .switch.on::after { left: 26px; }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from {opacity:0; transform: translateY(4px)} to {opacity:1; transform: none} }
+
+  /* Cards grid */
+  .grid { display: grid; gap: 18px; }
+  .grid.two   { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  @media (max-width: 880px) {
+    .grid.two, .grid.three { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 22px 22px;
+    box-shadow: var(--shadow-soft);
+    transition: transform .15s ease, border-color .2s, box-shadow .2s;
+    display: flex; flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(37, 99, 235, .45);
+    box-shadow: 0 14px 36px rgba(37, 99, 235, .14);
+  }
+  .card.featured {
+    border-color: rgba(124, 58, 237, .55);
+    box-shadow: 0 14px 36px rgba(124, 58, 237, .14);
+  }
+  .card.featured::before {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: var(--radius);
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, .55), rgba(124, 58, 237, .55));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none;
+  }
+  .badge {
+    position: absolute; top: -10px; right: 16px;
+    background: linear-gradient(135deg, var(--gold), #ea580c);
+    color: #fff; font-weight: 800; font-size: 11px;
+    padding: 4px 10px; border-radius: 999px;
+    letter-spacing: .4px; text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, .35);
+  }
+
+  .icon-wrap {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, .10), rgba(124, 58, 237, .10));
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .icon-wrap svg { width: 22px; height: 22px; stroke: var(--primary); }
+
+  .plan-name { font-size: 20px; font-weight: 700; margin: 0; color: var(--text); }
+  .plan-sub { color: var(--muted); font-size: 13px; margin: 4px 0 14px; min-height: 18px; }
+
+  .price {
+    display: flex; align-items: baseline; gap: 6px;
+    margin: 8px 0 4px;
+  }
+  .price .amount {
+    font-size: 32px; font-weight: 800; letter-spacing: -.5px; color: var(--text);
+  }
+  .price .period { color: var(--muted); font-size: 14px; }
+  .price .free {
+    background: linear-gradient(135deg, var(--good), #15803d);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .price-note {
+    font-size: 12px; color: var(--muted); margin: 0 0 14px; min-height: 16px;
+  }
+
+  ul.features {
+    list-style: none; padding: 0; margin: 0 0 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1;
+  }
+  ul.features li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 14px; color: #334155;
+  }
+  ul.features li svg {
+    flex-shrink: 0; width: 16px; height: 16px; margin-top: 2px;
+    stroke: var(--good);
+  }
+  .metric {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(37, 99, 235, .08);
+    border: 1px solid rgba(37, 99, 235, .25);
+    color: var(--primary-2);
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+    margin-bottom: 12px;
+    width: fit-content;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 600; font-size: 14px;
+    cursor: pointer;
+    transition: transform .08s ease, background .2s, border-color .2s, box-shadow .2s;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
+    background: var(--surface-2);
+  }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, .3);
+  }
+  .btn.primary:hover {
+    box-shadow: 0 10px 26px rgba(124, 58, 237, .35);
+    background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+  }
+  .btn.ghost { background: transparent; }
+
+  /* Custom Solutions full-width */
+  .custom-card {
+    display: grid;
+    grid-template-columns: 220px 1fr auto;
+    gap: 28px;
+    align-items: center;
+    padding: 28px;
+  }
+  .custom-card .bestia {
+    width: 100%; max-width: 200px; height: auto;
+    filter: drop-shadow(0 8px 24px rgba(245, 158, 11, .25));
+  }
+  .custom-card .features-2col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; margin: 12px 0 0;
+  }
+  @media (max-width: 880px) {
+    .custom-card { grid-template-columns: 1fr; text-align: center; }
+    .custom-card .bestia { margin: 0 auto; max-width: 140px; }
+    .custom-card .features-2col { grid-template-columns: 1fr; text-align: left; }
+  }
+
+  /* Footer logo for professional tab */
+  .panel-footer {
+    margin-top: 28px;
+    display: flex; align-items: center; justify-content: flex-start;
+    opacity: .85;
+  }
+  .panel-footer img { height: 36px; width: auto; }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, .5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; animation: fadeIn .18s ease; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, .25);
+    padding: 24px 24px 22px;
+    position: relative;
+    color: var(--text);
+  }
+  .modal h2 { margin: 0 0 4px; font-size: 20px; }
+  .modal p.sub { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+  .modal .close {
+    position: absolute; top: 12px; right: 12px;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: transparent; color: var(--muted); border: none;
+    cursor: pointer; font-size: 20px; line-height: 1;
+  }
+  .modal .close:hover { background: var(--surface-2); color: var(--text); }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .field label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .field input, .field textarea, .field select {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+  }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
+
+  .url-preview {
+    background: var(--bg-soft);
+    border: 1px dashed var(--border-strong);
+    color: var(--primary-2);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    margin: 6px 0 12px;
+    word-break: break-all;
+  }
+  .notice {
+    background: rgba(245, 158, 11, .08);
+    border: 1px solid rgba(245, 158, 11, .3);
+    color: #92400e;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin: 0 0 12px;
+    line-height: 1.5;
+  }
+  .notice.info {
+    background: rgba(37, 99, 235, .08);
+    border-color: rgba(37, 99, 235, .25);
+    color: #1e40af;
+  }
+  .notice.success {
+    background: rgba(22, 163, 74, .08);
+    border-color: rgba(22, 163, 74, .3);
+    color: #15803d;
+  }
+  .notice.error {
+    background: rgba(220, 38, 38, .08);
+    border-color: rgba(220, 38, 38, .3);
+    color: #991b1b;
+  }
+
+  .modal-actions {
+    display: flex; gap: 10px; margin-top: 8px;
+  }
+  .modal-actions .btn { flex: 1; }
+
+  hr.sep { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="brand">
+      <img class="logo" src="trustable.png" alt="Trustable" />
+      <h1>Choose your plan</h1>
+      <p class="tagline">Build, deploy and scale with confidence.</p>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="entry" role="tab">Entry Plans</button>
+      <button class="tab" data-tab="pro" role="tab">Professional Plans</button>
+      <button class="tab" data-tab="custom" role="tab">Custom Solutions</button>
+    </div>
+
+    <!-- Billing toggle -->
+    <div class="billing-toggle" id="billing-toggle">
+      <span class="billing-label active" data-cycle="monthly">Monthly</span>
+      <button class="switch" id="billing-switch" aria-label="Toggle yearly billing"></button>
+      <span class="billing-label" data-cycle="yearly">Yearly</span>
+    </div>
+
+    <!-- ENTRY PLANS -->
+    <section class="panel active" id="panel-entry">
+      <div class="grid two">
+        <!-- Hobby -->
+        <div class="card">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 4l9 8"/><path d="M5 10v10h14V10"/></svg>
+          </div>
+          <h3 class="plan-name">Hobby</h3>
+          <p class="plan-sub">Run locally, no publishing</p>
+          <div class="price"><span class="amount free">Free</span></div>
+          <p class="price-note">No credit card required</p>
+          <span class="metric">Self-hosted AI</span>
+          <ul class="features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Self-hosted AI server</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Local applications only</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>No publishing to internet</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Community support</li>
+          </ul>
+          <button class="btn" data-action="open-modal" data-modal="hobby">Configure Servers</button>
+        </div>
+
+        <!-- Freelance -->
+        <div class="card featured" data-monthly="20">
+          <span class="badge">Recommended</span>
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4c4 0 6 2 6 6-3 0-5 1-7 3l-3 3-4-4 3-3c2-2 3-4 3-7 0 0 .5-1 2-1 0 0 0 0 0 0Z"/><path d="m9 15-3 3"/><circle cx="15" cy="9" r="1.2"/></svg>
+          </div>
+          <h3 class="plan-name">Freelance</h3>
+          <p class="plan-sub">For solo builders shipping live</p>
+          <div class="price">
+            <span class="amount" data-price>$20</span>
+            <span class="period" data-period>/ month</span>
+          </div>
+          <p class="price-note" data-price-note>Billed monthly</p>
+          <span class="metric">20M tokens / day</span>
+          <ul class="features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>AI included — 20M tokens/day</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>One app on Nuvolaris.Dev</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>HTTPS publishing included</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Standard support</li>
+          </ul>
+          <button class="btn primary" data-action="open-modal" data-modal="signup" data-plan="freelance" data-trial="1">Free Trial 30 days</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFESSIONAL PLANS -->
+    <section class="panel" id="panel-pro">
+      <div class="grid three">
+        <!-- Startup -->
+        <div class="card" data-monthly="50">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="0.6" fill="currentColor"/><circle cx="7" cy="17" r="0.6" fill="currentColor"/></svg>
+          </div>
+          <h3 class="plan-name">Startup</h3>
+          <p class="plan-sub">Dedicated VM, unlimited apps</p>
+          <div class="price">
+            <span class="amount" data-price>$50</span>
+            <span class="period" data-period>/ month</span>
+          </div>
+          <p class="price-note" data-price-note>Billed monthly</p>
+          <span class="metric">50M tokens / day</span>
+          <ul class="features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>1 dedicated node</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Unlimited apps</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>50M tokens/day</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Professional Support</li>
+          </ul>
+          <button class="btn" data-action="open-modal" data-modal="signup" data-plan="startup">Buy This</button>
+        </div>
+
+        <!-- Scaleup -->
+        <div class="card featured" data-monthly="200">
+          <span class="badge">Most Popular</span>
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 7v4M12 11l-5 5M12 11l5 5"/></svg>
+          </div>
+          <h3 class="plan-name">Scaleup</h3>
+          <p class="plan-sub">Cluster deployment</p>
+          <div class="price">
+            <span class="amount" data-price>$200</span>
+            <span class="period" data-period>/ month</span>
+          </div>
+          <p class="price-note" data-price-note>Billed monthly</p>
+          <span class="metric">100M tokens / day</span>
+          <ul class="features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Cluster: 1 master, 2 workers</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>100M tokens/day</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Horizontal scaling</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
+          </ul>
+          <button class="btn primary" data-action="open-modal" data-modal="signup" data-plan="scaleup">Buy This</button>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="card" data-monthly="500">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h3 class="plan-name">Enterprise</h3>
+          <p class="plan-sub">High Availability cluster</p>
+          <div class="price">
+            <span class="amount" data-price>$500</span>
+            <span class="period" data-period>/ month</span>
+          </div>
+          <p class="price-note" data-price-note>Billed monthly</p>
+          <span class="metric">200M tokens / day</span>
+          <ul class="features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>HA Cluster: 3 masters, 3 workers</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>200M tokens/day</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Multi-region failover</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>SLA & dedicated CSM</li>
+          </ul>
+          <button class="btn" data-action="open-modal" data-modal="signup" data-plan="enterprise">Buy This</button>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <img src="nuvolaris.png" alt="Nuvolaris" />
+      </div>
+    </section>
+
+    <!-- CUSTOM SOLUTIONS -->
+    <section class="panel" id="panel-custom">
+      <div class="card custom-card featured">
+        <img class="bestia" src="bestia.png" alt="BestIA" />
+        <div>
+          <h3 class="plan-name" style="font-size:24px;">BestIA Custom Solutions</h3>
+          <p class="plan-sub">Tailored deployments for organizations with strict requirements.</p>
+          <ul class="features features-2col">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Site License for Trustable</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Private AI with on-premises GPU</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nuvolaris Enterprise License</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Monitoring and Backup</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Proactive Enterprise Support</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Custom integrations</li>
+          </ul>
+        </div>
+        <div style="min-width: 200px;">
+          <button class="btn primary" data-action="open-modal" data-modal="contact">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== MODAL: Hobby (server config) ===== -->
+  <div class="modal-backdrop" id="modal-hobby">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="hobby-title">
+      <button class="close" data-action="close-modal" aria-label="Close">×</button>
+      <h2 id="hobby-title">Configure your AI server</h2>
+      <p class="sub">Point Trustable to your self-hosted AI endpoint.</p>
+
+      <div class="notice">
+        Your server must be reachable over <b>HTTP, without authentication</b>.
+        Make sure it is accessible from this machine on the local network.
+      </div>
+
+      <form id="form-hobby" onsubmit="return false;">
+        <div class="row-2">
+          <div class="field">
+            <label for="hobby-host">Host</label>
+            <input id="hobby-host" type="text" placeholder="localhost" value="localhost" />
+          </div>
+          <div class="field">
+            <label for="hobby-port">Port</label>
+            <input id="hobby-port" type="number" placeholder="11434" value="11434" min="1" max="65535" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Server URL</label>
+          <div class="url-preview" id="hobby-url">http://localhost:11434/v1</div>
+        </div>
+
+        <div id="hobby-test-result"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="hobby-test">Test Connection</button>
+          <button type="button" class="btn primary" id="hobby-save">Save & Continue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: Signup ===== -->
+  <div class="modal-backdrop" id="modal-signup">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signup-title">
+      <button class="close" data-action="close-modal" aria-label="Close">×</button>
+      <h2 id="signup-title">Create your account</h2>
+      <p class="sub" id="signup-subtitle">Activate your plan in under a minute.</p>
+
+      <form id="form-signup" onsubmit="return false;">
+        <div class="row-2">
+          <div class="field">
+            <label for="su-first">First name</label>
+            <input id="su-first" type="text" required />
+          </div>
+          <div class="field">
+            <label for="su-last">Last name</label>
+            <input id="su-last" type="text" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="su-email">Email</label>
+          <input id="su-email" type="email" required placeholder="you@company.com" />
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="su-pwd">Password</label>
+            <input id="su-pwd" type="password" required minlength="8" />
+          </div>
+          <div class="field">
+            <label for="su-pwd2">Confirm password</label>
+            <input id="su-pwd2" type="password" required minlength="8" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="su-company">Company (optional)</label>
+          <input id="su-company" type="text" />
+        </div>
+
+        <hr class="sep" />
+
+        <h3 style="margin:0 0 4px;font-size:15px;">Payment details</h3>
+        <p class="sub" style="margin-bottom:12px;" id="signup-billing-line">Billed monthly. Cancel anytime.</p>
+
+        <div class="field">
+          <label for="cc-num">Card number</label>
+          <input id="cc-num" type="text" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="19" />
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="cc-exp">Expiry (MM/YY)</label>
+            <input id="cc-exp" type="text" placeholder="12/29" maxlength="5" />
+          </div>
+          <div class="field">
+            <label for="cc-cvc">CVC</label>
+            <input id="cc-cvc" type="text" inputmode="numeric" placeholder="123" maxlength="4" />
+          </div>
+        </div>
+
+        <div id="signup-trial-notice" class="notice info" style="display:none;">
+          <b>30-day free trial — nothing will be charged today.</b><br/>
+          Cancel anytime. We will warn you by email before charging.
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" data-action="close-modal">Cancel</button>
+          <button type="button" class="btn primary" id="signup-submit">Activate Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: Contact ===== -->
+  <div class="modal-backdrop" id="modal-contact">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="contact-title">
+      <button class="close" data-action="close-modal" aria-label="Close">×</button>
+      <h2 id="contact-title">Talk to our team</h2>
+      <p class="sub">Tell us about your project — we will be in touch shortly.</p>
+
+      <form id="form-contact" onsubmit="return false;">
+        <div class="row-2">
+          <div class="field">
+            <label for="ct-first">First name</label>
+            <input id="ct-first" type="text" required />
+          </div>
+          <div class="field">
+            <label for="ct-last">Last name</label>
+            <input id="ct-last" type="text" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="ct-email">Work email</label>
+          <input id="ct-email" type="email" required />
+        </div>
+        <div class="field">
+          <label for="ct-company">Company</label>
+          <input id="ct-company" type="text" required />
+        </div>
+        <div class="field">
+          <label for="ct-size">Company size</label>
+          <select id="ct-size">
+            <option>1–10</option>
+            <option>11–50</option>
+            <option>51–200</option>
+            <option>201–1000</option>
+            <option>1000+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ct-msg">How can we help?</label>
+          <textarea id="ct-msg" rows="4" placeholder="Use case, expected scale, deadlines..."></textarea>
+        </div>
+
+        <div id="contact-success" class="notice success" style="display:none;">
+          Thanks! We will be in touch with you ASAP.
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" data-action="close-modal">Cancel</button>
+          <button type="button" class="btn primary" id="contact-submit">Send Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  // ---------- Tabs ----------
+  const tabs = document.querySelectorAll('.tab');
+  const panels = {
+    entry: document.getElementById('panel-entry'),
+    pro: document.getElementById('panel-pro'),
+    custom: document.getElementById('panel-custom'),
+  };
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      Object.values(panels).forEach(p => p.classList.remove('active'));
+      panels[t.dataset.tab].classList.add('active');
+    });
+  });
+
+  // ---------- Billing toggle (Monthly / Yearly) ----------
+  // Yearly price = monthly * 10  (i.e., 2 months free)
+  const billingSwitch = document.getElementById('billing-switch');
+  const billingLabels = document.querySelectorAll('.billing-label');
+  let cycle = 'monthly';
+
+  function applyCycle() {
+    document.querySelectorAll('[data-monthly]').forEach(card => {
+      const m = parseInt(card.dataset.monthly, 10);
+      const priceEl = card.querySelector('[data-price]');
+      const periodEl = card.querySelector('[data-period]');
+      const noteEl = card.querySelector('[data-price-note]');
+      if (!priceEl) return;
+      if (cycle === 'monthly') {
+        priceEl.textContent = `$${m}`;
+        periodEl.textContent = '/ month';
+        if (noteEl) noteEl.textContent = 'Billed monthly';
+      } else {
+        const yearly = m * 10;
+        priceEl.textContent = `$${yearly}`;
+        periodEl.textContent = '/ year';
+        if (noteEl) noteEl.textContent = `Billed yearly — equivalent to $${m} × 10`;
+      }
+    });
+    billingLabels.forEach(l => {
+      l.classList.toggle('active', l.dataset.cycle === cycle);
+    });
+    billingSwitch.classList.toggle('on', cycle === 'yearly');
+  }
+
+  billingSwitch.addEventListener('click', () => {
+    cycle = (cycle === 'monthly') ? 'yearly' : 'monthly';
+    applyCycle();
+  });
+  billingLabels.forEach(l => {
+    l.addEventListener('click', () => {
+      cycle = l.dataset.cycle;
+      applyCycle();
+    });
+  });
+  applyCycle();
+
+  // ---------- Modals ----------
+  const backdrops = {
+    hobby: document.getElementById('modal-hobby'),
+    signup: document.getElementById('modal-signup'),
+    contact: document.getElementById('modal-contact'),
+  };
+
+  const planMonthly = { freelance: 20, startup: 50, scaleup: 200, enterprise: 500 };
+
+  function openModal(name, ctx = {}) {
+    const el = backdrops[name];
+    if (!el) return;
+    el.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    if (name === 'signup') {
+      const sub = document.getElementById('signup-subtitle');
+      const trial = document.getElementById('signup-trial-notice');
+      const billLine = document.getElementById('signup-billing-line');
+      const submit = document.getElementById('signup-submit');
+
+      const planNames = {
+        freelance: 'Freelance', startup: 'Startup',
+        scaleup: 'Scaleup',     enterprise: 'Enterprise',
+      };
+      const m = planMonthly[ctx.plan];
+      let priceLabel = '';
+      if (m != null) {
+        priceLabel = (cycle === 'yearly')
+          ? ` — $${m * 10}/year`
+          : ` — $${m}/month`;
+      }
+      sub.textContent = ctx.plan
+        ? `Plan: ${planNames[ctx.plan] || ctx.plan}${priceLabel}`
+        : 'Activate your plan in under a minute.';
+
+      billLine.textContent = (cycle === 'yearly')
+        ? 'Billed yearly. Cancel anytime.'
+        : 'Billed monthly. Cancel anytime.';
+
+      trial.style.display = ctx.trial ? 'block' : 'none';
+      submit.textContent = ctx.trial ? 'Start Free Trial' : 'Activate Plan';
+    }
+  }
+  function closeModal() {
+    Object.values(backdrops).forEach(el => el.classList.remove('open'));
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    const opener = e.target.closest('[data-action="open-modal"]');
+    if (opener) {
+      openModal(opener.dataset.modal, {
+        plan: opener.dataset.plan,
+        trial: opener.dataset.trial === '1',
+      });
+      return;
+    }
+    if (e.target.matches('[data-action="close-modal"]')) {
+      closeModal();
+      return;
+    }
+    if (e.target.classList.contains('modal-backdrop')) {
+      closeModal();
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // ---------- Hobby URL preview + test ----------
+  const hHost = document.getElementById('hobby-host');
+  const hPort = document.getElementById('hobby-port');
+  const hUrl  = document.getElementById('hobby-url');
+  const hTest = document.getElementById('hobby-test');
+  const hSave = document.getElementById('hobby-save');
+  const hRes  = document.getElementById('hobby-test-result');
+
+  function renderHobbyUrl() {
+    const host = (hHost.value || '').trim() || 'localhost';
+    const port = (hPort.value || '').trim() || '11434';
+    hUrl.textContent = `http://${host}:${port}/v1`;
+  }
+  hHost.addEventListener('input', renderHobbyUrl);
+  hPort.addEventListener('input', renderHobbyUrl);
+
+  hTest.addEventListener('click', async () => {
+    const url = hUrl.textContent;
+    hRes.innerHTML = `<div class="notice info">Testing <b>${url}</b>…</div>`;
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 4000);
+      const resp = await fetch(url + '/models', { method: 'GET', signal: ctrl.signal, mode: 'cors' });
+      clearTimeout(t);
+      if (resp.ok) {
+        hRes.innerHTML = `<div class="notice success">Connection successful — server responded with HTTP ${resp.status}.</div>`;
+      } else {
+        hRes.innerHTML = `<div class="notice error">Server reachable but returned HTTP ${resp.status}.</div>`;
+      }
+    } catch (err) {
+      hRes.innerHTML = `<div class="notice error">Could not reach the server. Check host/port and that it allows HTTP without auth.</div>`;
+    }
+  });
+
+  hSave.addEventListener('click', () => {
+    renderHobbyUrl();
+    hRes.innerHTML = `<div class="notice success">Saved: ${hUrl.textContent}</div>`;
+    setTimeout(closeModal, 800);
+  });
+
+  // ---------- Signup submit ----------
+  document.getElementById('signup-submit').addEventListener('click', () => {
+    const pwd  = document.getElementById('su-pwd').value;
+    const pwd2 = document.getElementById('su-pwd2').value;
+    const email = document.getElementById('su-email').value;
+    const first = document.getElementById('su-first').value;
+    const last  = document.getElementById('su-last').value;
+    if (!first || !last || !email || !pwd) {
+      alert('Please fill in your name, email and password.');
+      return;
+    }
+    if (pwd !== pwd2) {
+      alert('Passwords do not match.');
+      return;
+    }
+    alert('Account created (demo). Next: server provisioning.');
+    closeModal();
+  });
+
+  // ---------- Contact submit ----------
+  document.getElementById('contact-submit').addEventListener('click', () => {
+    const email = document.getElementById('ct-email').value;
+    const company = document.getElementById('ct-company').value;
+    if (!email || !company) {
+      alert('Please provide your work email and company.');
+      return;
+    }
+    document.getElementById('contact-success').style.display = 'block';
+    setTimeout(closeModal, 1500);
+  });
+</script>
+</body>
+</html>
