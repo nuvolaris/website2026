@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Nuvolaris</title>
+    <script>
+      // GitHub Pages SPA fallback. Pages serves this file for any path that has
+      // no matching file (e.g. /contact). We stash the requested path in the
+      // query string and bounce to /, where main.tsx restores it via
+      // history.replaceState before the router mounts. Keeps deep links and
+      // hard refreshes working on a host that cannot rewrite to index.html.
+      (function () {
+        var l = window.location;
+        var path = l.pathname.replace(/\/$/, "");
+        var query = l.search ? "&" + l.search.slice(1).replace(/&/g, "~and~") : "";
+        l.replace(l.origin + "/?" + path + query + l.hash);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
